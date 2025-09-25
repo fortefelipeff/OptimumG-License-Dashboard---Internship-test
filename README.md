@@ -1,121 +1,116 @@
-# OptimumG Application Test
+# License Management Dashboard
 
-The objective of this test is to create a screen using React that communicates with a C++ addon which manages the licenses of an application.
+This project implements the OptimumG hiring challenge: a React dashboard that manages application licenses through a Node.js native addon written in C++ (N-API).
 
-- The Frontend must be written in Javascript/Typescript and it must communicate with the backend written in C++.
-
-- You can use libraries, such as Material UI, in order to have standardized components.
-
-- The base project provided should run an example "Hello World" C++ function just to give an example of how the communication of the Frontend and Backend works.
-
-- You are free to change any files already provided, remove or include functionalities.
-
-- Basic OOP principles are expected to be followed in the backend.
-    
-    - Example: Single Responsibility Principle
-
-- The use of git, such commit history, will be evaluated.
-
-- Creating tests such as unit tests is not required, but can be a bonus
-    
-    - For Frontend tests we recommend using playwright
-
-
-Extra: The Frontend can be based in the OptimumTire2 screen to manage the licenses, but this is not a requirement:
-
-(the screenshot can be found in ./assets/OptimumTire2.png)
-
-![License Management Interface](./assets/OptimumTire2.png)
-
-
-# Node.js Native Addon Project
-
-This is a Node.js Native Addon project that can use C++ extensions in Node.js using N-API (Node API). Check: https://github.com/nodejs/node-addon-api
-
-The base project includes a simple C++ function that can be called from JavaScript/TypeScript.
+The solution is split into:
+- **Native layer (C++)** ? `src/backend/*.cpp` implements license domain logic and exposes it through the addon.
+- **Node/TypeScript API** ? `src/backend/index.ts` wraps the addon with typed helpers; `src/server` exposes REST endpoints.
+- **React frontend** ? Vite + Material UI (`frontend/`) renders a license management UI consuming the REST API.
 
 ## Prerequisites
 
-Before running this project, make sure you have the following installed:
+- Node.js 18+ (tested with v22.15.0)
+- npm
+- Python 3.6+
+- C++ toolchain for `node-gyp`
+  - Windows: Visual Studio Build Tools / Desktop development with C++
+  - macOS: Xcode Command Line Tools
+  - Linux: build-essential (gcc/g++)
 
-- **Node.js** (v12 or higher)
-- **npm** (comes with Node.js)
-- **Python** (v3.6 or higher) - required by node-gyp
-- **C++ compiler**:
-  - **Windows**: Visual Studio 2017 or later (or Visual Studio Build Tools)
-  - **macOS**: Xcode Command Line Tools
-  - **Linux**: GCC/G++ compiler
+## Project structure
 
-## Installation
-
-1. **Clone or download the project** to your local machine.
-
-2. **Navigate to the project directory**:
-   ```bash
-   cd intern-test-napi
-   ```
-
-3. **Install dependencies**:
-   ```bash
-   npm install
-   ```
-
-## How to Run
-
-
-### Method 1: Full Build and Run
-
-If you need to rebuild the native addon (e.g., after making changes to C++ code):
-
-1. **Build the native addon**:
-   ```bash
-   npx node-gyp rebuild
-   ```
-
-2. **Run the project**:
-   ```bash
-   node index.js
-   ```
-
-
-### Method 2: Quick Run
-
-If the native addon is already built, you can run the project directly:
-
-1. **Run the project**:
-   ```bash
-   node index.js
-   ```
-
-## Expected Output
-
-When you run the base project successfully, you should see:
 ```
-Hello from C++!
+??? src/backend           # C++ addon implementation
+??? src/server            # Express REST API wrapping the addon
+??? frontend              # React + Vite application
+??? binding.gyp           # node-gyp build definition
+??? PLAN.md               # Planning notes & milestones
+??? README.md             # You are here
 ```
 
-## Troubleshooting
+## Backend setup
 
-### Common Issues
+Install dependencies and build the addon + TypeScript output:
 
-1. **Build Errors**: 
-   - Make sure you have the correct C++ compiler installed
-   - Ensure Python is installed and accessible from the command line
-   - Try running `npm install --global node-gyp` if node-gyp is not found
+```bash
+npm install
+npm run build              # node-gyp rebuild + tsc (outputs to dist/)
+```
 
-2. **Permission Errors on Windows**:
-   - Try running the command prompt as Administrator
-   - Check that antivirus software isn't blocking the build process
+Run the REST API with hot reload (ts-node + nodemon):
 
-## Development
+```bash
+npm run dev:server
+```
 
-### Adding New C++ Functions
+or execute the compiled server:
 
-1. Add your function to `src/backend/addon.cpp`
-2. Export it in the `Init` function
-3. Rebuild the addon with `npx node-gyp rebuild`
-4. Update your TypeScript/JavaScript code to use the new function
+```bash
+npm start:server
+```
 
-### TypeScript Development
+### Available endpoints
 
-The TypeScript configuration is set up in `tsconfig.json`. You can modify the compilation settings there as needed.
+Base URL defaults to `http://localhost:4000/api` (configurable via `PORT`).
+
+| Method | Endpoint                              | Description                            |
+| ------ | ------------------------------------- | -------------------------------------- |
+| GET    | `/api/health`                         | Health check                           |
+| GET    | `/api/licenses`                       | List all licenses                      |
+| GET    | `/api/licenses/:key`                  | Fetch license details                  |
+| POST   | `/api/licenses/:key/activate`         | Activate machine `{ machineId, activatedBy }` |
+| POST   | `/api/licenses/:key/deactivate`       | Deactivate machine `{ machineId }`     |
+| GET    | `/api/licenses/:key/status`           | Status snapshot (state + days left)    |
+
+Each route returns `{ data: ... }` on success or `{ error: message }` with appropriate HTTP codes on failure.
+
+## Frontend setup
+
+The React application lives under `frontend/`.
+
+```bash
+cd frontend
+npm install
+cp .env.example .env   # optional, overrides VITE_API_BASE_URL
+npm run dev            # starts Vite dev server (default http://localhost:5173)
+```
+
+Build for production:
+
+```bash
+npm run build
+```
+
+The UI mirrors the OptimumTire2 reference: license list on the left and details/activation controls on the right, including status chips, remaining days, and machine management dialogs.
+
+## Development workflow
+
+1. Ensure the native addon builds (`npm run build:addon`) after any C++ changes.
+2. Run `npm run dev:server` to expose the API.
+3. In another terminal, `npm run dev` inside `frontend/` to develop the UI with hot reload.
+4. Commit frequently with descriptive messages (see git history for examples).
+
+Manual test checklist:
+- Activate a trial license and verify status transitions (pending ? active).
+- Deactivate a machine and confirm slots and status update.
+- Attempt to activate beyond limit and confirm backend rejection.
+- Observe remaining days and expired status for past-due licenses.
+
+## Scripts reference
+
+| Command | Location | Purpose |
+| ------- | -------- | ------- |
+| `npm run build:addon` | root | Rebuild native addon via node-gyp |
+| `npm run build:backend` | root | Compile TypeScript backend to `dist/` |
+| `npm run dev:server` | root | Start Express API with hot reload |
+| `npm run start:server` | root | Run compiled Express API |
+| `npm run build` | frontend | Production build (tsc + Vite) |
+| `npm run dev` | frontend | Vite dev server |
+
+## Notes
+
+- All TypeScript types mirror the C++ domain objects so the frontend receives consistent data.
+- The C++ layer maintains an in-memory repository with mock data but follows SRP to ease replacement with real persistence.
+- React Query manages API state; Material UI provides styling for a professional look.
+- See `PLAN.md` for architectural decisions and future enhancements.
+
