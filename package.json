@@ -1,0 +1,20 @@
+{
+  "name": "intern-test-napi",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "node-addon-api": "^8.5.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.3.1",
+    "node-gyp": "^11.4.2",
+    "typescript": "^5.9.2"
+  }
+}
