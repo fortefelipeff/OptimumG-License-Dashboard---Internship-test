@@ -2,19 +2,31 @@
   "name": "intern-test-napi",
   "version": "1.0.0",
   "main": "index.js",
+  "description": "",
+  "license": "ISC",
   "scripts": {
+    "build:addon": "node-gyp rebuild",
+    "build:backend": "tsc",
+    "build": "npm run build:addon && npm run build:backend",
+    "dev:server": "nodemon --watch src --ext ts --exec \"ts-node src/server/index.ts\"",
+    "start:server": "node dist/server/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
-  "description": "",
   "dependencies": {
-    "node-addon-api": "^8.5.0"
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "node-addon-api": "^8.5.0",
+    "zod": "^4.1.11"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
     "@types/node": "^24.3.1",
     "node-gyp": "^11.4.2",
+    "nodemon": "^3.1.10",
+    "ts-node": "^10.9.2",
     "typescript": "^5.9.2"
   }
 }

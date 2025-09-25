@@ -95,3 +95,42 @@ If using direct Electron bridge, equivalent methods exposed via preload.
 1. Finalize domain types (`ManageLicense.h`) and diagram interactions.
 2. Seed mock data and outline backend classes in C++.
 3. Decide middleware approach (Express vs direct) and scaffold structure.
+
+## Phase 2 ? Backend & Frontend Implementation Plan (Detailed)
+
+1. Backend TypeScript wrapper
+   - Create `src/backend/index.ts` to load the compiled addon via `require` and expose typed functions.
+   - Define TS interfaces mirroring `License`, `Activation` etc. (ISO string dates).
+   - Add error handling: convert boolean returns into thrown errors when operations fail.
+   - Update `package.json` scripts: `build:addon`, `build:backend`, `start:backend`.
+
+2. API Layer (Express)
+   - Install dependencies: `express`, `cors`, `zod` (for payload validation).
+   - Create `src/server/app.ts`: define routes `/api/licenses`, `/api/licenses/:key`, activation/deactivation endpoints.
+   - Implement validation + response shaping; map addon errors to HTTP codes.
+   - Add entry point `src/server/index.ts` to start server at configurable port.
+   - Update `tsconfig.json` include paths and emit to `dist/`; add `npm scripts` (`dev:server`, `build:server`).
+
+3. Frontend setup
+   - Scaffold Vite React app under `frontend/` (`npm create vite@latest frontend -- --template react-ts`).
+   - Configure shared env (`.env`, `VITE_API_BASE_URL`).
+   - Install UI libs: `@mui/material`, `@emotion/react`, `@emotion/styled`, `@mui/icons-material`, `@tanstack/react-query`.
+   - Set up Axios or fetch wrapper for API calls.
+
+4. Frontend architecture
+   - Build layout: sidebar/table + detail pane; create components: `LicenseTable`, `LicenseDetails`, `ActivationDialog`, `NotificationProvider`.
+   - Integrate React Query for data fetching/mutations (refresh on success).
+   - Implement state for selected license, filters, error handling.
+   - Apply styling consistent with reference screenshot.
+
+5. Testing & tooling
+   - Optional: add Jest/ts-jest for backend logic tests.
+   - Optional: add Playwright config for key UI flows.
+   - Document manual test scenarios in README.
+
+6. Documentation & cleanup
+   - Update README with new scripts (build/run backend, start frontend).
+   - Explain architecture: C++ addon ? TS wrapper ? Express ? React.
+   - Add instructions for running both servers concurrently (e.g., `npm run dev:server` + `npm --prefix frontend run dev`).
+
+Next immediate tasks: 1) implement TypeScript wrapper & Express API; 2) scaffold frontend once backend endpoints are available.
