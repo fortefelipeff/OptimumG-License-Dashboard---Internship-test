@@ -136,3 +136,10 @@ Run the Jest integration suite (compiles the native addon before executing):
 npm test
 ```
 
+## Screenshots
+
+![Dashboard overview](./assets/dashboard-overview.png)
+
+![Trial license detail](./assets/dashboard-trial.png)
+
+![Activation modal](./assets/dashboard-activate-modal.png)
