@@ -3,8 +3,8 @@
 This project implements the OptimumG hiring challenge: a React dashboard that manages application licenses through a Node.js native addon written in C++ (N-API).
 
 The solution is split into:
-- **Native layer (C++)** ? `src/backend/*.cpp` implements license domain logic and exposes it through the addon.
-- **Node/TypeScript API** ? `src/backend/index.ts` wraps the addon with typed helpers; `src/server` exposes REST endpoints.
+- **Native layer (C++)**  `src/backend/*.cpp` implements license domain logic and exposes it through the addon.
+- **Node/TypeScript API**  `src/backend/index.ts` wraps the addon with typed helpers; `src/server` exposes REST endpoints.
 - **React frontend** ? Vite + Material UI (`frontend/`) renders a license management UI consuming the REST API.
 
 ## Prerequisites
@@ -20,12 +20,12 @@ The solution is split into:
 ## Project structure
 
 ```
-??? src/backend           # C++ addon implementation
-??? src/server            # Express REST API wrapping the addon
-??? frontend              # React + Vite application
-??? binding.gyp           # node-gyp build definition
-??? PLAN.md               # Planning notes & milestones
-??? README.md             # You are here
+ src/backend           # C++ addon implementation
+ src/server            # Express REST API wrapping the addon
+ frontend              # React + Vite application
+ binding.gyp           # node-gyp build definition
+ PLAN.md               # Planning notes & milestones
+ README.md             # You are here
 ```
 
 ## Backend setup
@@ -91,7 +91,7 @@ The UI mirrors the OptimumTire2 reference: license list on the left and details/
 4. Commit frequently with descriptive messages (see git history for examples).
 
 Manual test checklist:
-- Activate a trial license and verify status transitions (pending ? active).
+- Activate a trial license and verify status transitions (pending, active).
 - Deactivate a machine and confirm slots and status update.
 - Attempt to activate beyond limit and confirm backend rejection.
 - Observe remaining days and expired status for past-due licenses.
