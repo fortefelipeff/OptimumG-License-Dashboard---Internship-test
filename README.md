@@ -114,3 +114,17 @@ Manual test checklist:
 - React Query manages API state; Material UI provides styling for a professional look.
 - See `PLAN.md` for architectural decisions and future enhancements.
 
+## Manual validation
+
+Core flows confirmed via REST calls (PowerShell) using an alternate port when 4000 was occupied:
+
+```powershell
+$env:PORT = 4001
+npm run dev:server
+
+Invoke-RestMethod -Uri "http://localhost:4001/api/licenses"
+Invoke-RestMethod -Uri "http://localhost:4001/api/licenses/OPT-TRIAL-041/activate" -Method POST -Body '{"machineId":"QA-RIG-01","activatedBy":"qa"}' -ContentType 'application/json'
+Invoke-RestMethod -Uri "http://localhost:4001/api/licenses/OPT-TRIAL-041/deactivate" -Method POST -Body '{"machineId":"QA-RIG-01"}' -ContentType 'application/json'
+```
+
+Frontend dev server executed with `.env` pointing `VITE_API_BASE_URL` to `http://localhost:4001/api`; activation/deactivation workflows reflected updates immediately (snackbars, table refresh).
