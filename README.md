@@ -128,3 +128,11 @@ Invoke-RestMethod -Uri "http://localhost:4001/api/licenses/OPT-TRIAL-041/deactiv
 ```
 
 Frontend dev server executed with `.env` pointing `VITE_API_BASE_URL` to `http://localhost:4001/api`; activation/deactivation workflows reflected updates immediately (snackbars, table refresh).
+### Automated tests
+
+Run the Jest integration suite (compiles the native addon before executing):
+
+```bash
+npm test
+```
+

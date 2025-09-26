@@ -140,3 +140,4 @@ Next immediate tasks: 1) implement TypeScript wrapper & Express API; 2) scaffold
   - `POST /api/licenses/OPT-TRIAL-041/activate` with `{ machineId: "QA-RIG-01", activatedBy: "qa" }` marked license active.
   - `POST /api/licenses/OPT-TRIAL-041/deactivate` with `{ machineId: "QA-RIG-01" }` reverted status to inactive and freed the slot.
 - Frontend validated manually via Vite dev server pointing to `http://localhost:4001/api` (snackbar feedback and list/detail refresh confirmed).
+- Added Jest + Supertest integration tests covering license listing, activation/deactivation cycle, and expired status check (see `src/server/app.test.ts`).
